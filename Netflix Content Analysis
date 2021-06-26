@@ -1,0 +1,143 @@
+
+The dataset consists of tv shows and movies available on Netflix as of
+2020, and keeps getting updated.
+
+The dataset is collected from Kaggle, which in turn is primarily
+based on the data collected from the website flixable.com that allows
+users to browse all the TV Shows and Movies currently available to
+stream on Netflix.
+
+Data includes information on the title's name, type (show or movie),
+director, cast, countries involved in the production, date of
+availability on Netflix, original release year, rating(TV-MA or TV
+Parental Guidelines), duration, and genre.
+
+The purpose of this analysis is to understand the following:
+
+1.Is Netflix increasingly focusing on TV Shows rather than movies in recent
+years?
+
+2.Is there more mature or kids-friendly content?
+
+3.Which directors’ movies do we see more often on Netflix?
+
+4.What has been the content growth of movies year-wise?
+
+5.What has been the content growth of tv shows year-wise?
+
+6.In which months does Netflix add more contents?
+
+7.Which countries are producing more content?
+
+8.Which countries have a higher average length of movies?
+
+9.Do most Netflix TV Shows have a longer life span?
+
+
+
+
+
+
+/*What is the percentage distribution of type of content on Netflix?*/
+SET @total=0;
+
+SELECT type_of_title, count(*) as Count, count(*) / @total * 100 AS
+Percent FROM (
+SELECT type_of_title, @total := @total + 1
+FROM netflix_titles) temp
+GROUP BY type_of_title;
+
+
+/*What is the year-wise growth of TV Shows*/
+SELECT type_of_title, Year(NewDateAdded), count(*) AS Count
+from netflix_titles
+where type_of_title = "TV Show"
+Group By Year(NewDateAdded)
+ORDER By count(*) DESC;
+
+
+/*What is the year-wise growth of Movies*/
+SELECT type_of_title, Year(NewDateAdded), count(*) AS Count
+from netflix_titles
+where type_of_title = "Movie"
+Group By Year(NewDateAdded)
+Order By count(*) DESC;
+
+
+
+
+
+/*Oldest movies on Netflix*/
+select type_of_title, Release_year
+from netflix_titles
+where type_of_title = "Movie" AND Release_year between "1942" AND "1960"
+ORDER BY Release_year;
+
+/*Oldest TV Shows on Netflix*/
+select type_of_title, Release_year
+from netflix_titles
+where type_of_title = "TV Show"  AND Release_year BETWEEN "1942-00-00"
+AND "1960-00-00"
+ORDER BY Release_year;
+
+/*Which Countries have produced most content */
+select country, count(*) as Count_of_content
+from netflix_titles
+GROUP BY country
+ORDER BY count(*) DESC;
+
+/*Which genre has the highest number of content?*/
+SELECT genre, Total
+FROM (SELECT genre, COUNT(*) AS Total FROM netflix_titles GROUP BY
+genre) AS temp
+ORDER BY Total DESC;
+
+/*Genres with most content*/
+select genre, count(*) as Count_of_content
+from netflix_titles
+GROUP BY genre
+ORDER BY count(*) DESC;
+
+/*Which TV shows have the most no. of season?*/
+select title, Seasons
+from netflix_tv_shows
+order by Seasons DESC;
+
+/*What is the average movie duration in USA, India, Spain and UK?*/
+SELECT Round(AVG(Duration)), country
+from netflix_movies
+where country IN ('United States','India','United Kingdom', 'Spain')
+Group By country
+Order By Round(AVG(Duration)) DESC;
+
+/*Which Movie Directors have produced the most content in India?*/
+SELECT director, Count(*) as Count
+from netflix_titles
+where country = "India"
+Group By director
+HAVING Count(*) >1
+Order BY Count(*) DESC;
+
+/*Which Movie Directors have produced the most content in USA?*/
+SELECT director, Count(*) as Count
+from netflix_titles
+where country = "United States"
+Group By director
+HAVING Count(*) >1
+Order BY Count(*) DESC;
+
+/*What is the percentage distribution of the type of internal ratings
+on Netflix?*/
+SET @row_no=0;
+
+SELECT rating, count(*) as Count, round(count(*) / @row_no * 100) AS
+Distribution FROM (
+SELECT rating, @row_no := @row_no + 1
+FROM netflix_titles) temp
+GROUP BY rating;
+
+/*Which months have the highest number of contents added?*/
+SELECT type_of_title, Month(NewDateAdded), count(*) AS Count
+from netflix_titles
+Group By Month(NewDateAdded)
+Order By count(*) DESC;
