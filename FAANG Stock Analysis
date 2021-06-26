@@ -1,0 +1,281 @@
+Research Project – FAANG Stock Analysis
+create database FAANG_stockprice;
+
+Use FAANG_stockprice;
+
+Alter table amazon add column NewDate date;
+Update amazon
+SET NewDate = Str_to_date(Left(Date,10), %d-%m-%Y);
+
+Alter table apple add column NewDate date;
+Update apple
+
+SET NewDate = Str_to_date(Left(Date,10), %d-%m-%Y);
+
+Alter table facebook add column NewDate date;
+Update facebook
+SET NewDate = Str_to_date(Left(Date,10), %d-%m-%Y);
+
+Alter table google add column NewDate date;
+Update google
+SET NewDate = Str_to_date(Left(Date,10), %d-%m-%Y);
+
+Alter table netflix add column NewDate date;
+Update netflix
+SET NewDate = Str_to_date(Left(Date,10), &#39;%d-%m-%Y&#39;);
+
+update amazon set 10_day_MA=if(10_day_MA=&#39;&#39;,NULL,10_day_MA);
+update amazon set 30_day_MA=if(30_day_MA=&#39;&#39;,NULL,30_day_MA);
+
+update apple set 10_day_MA=if(10_day_MA=&#39;&#39;,NULL,10_day_MA);
+update apple set 30_day_MA=if(30_day_MA=&#39;&#39;,NULL,30_day_MA);
+
+update netflix set 10_day_MA=if(10_day_MA=&#39;&#39;,NULL,10_day_MA);
+update netflix set 30_day_MA=if(30_day_MA=&#39;&#39;,NULL,30_day_MA);
+
+update google set 10_day_MA=if(10_day_MA=&#39;&#39;,NULL,10_day_MA);
+update google set 30_day_MA=if(30_day_MA=&#39;&#39;,NULL,30_day_MA);
+
+update facebook set 10_day_MA=if(10_day_MA=&#39;&#39;,NULL,10_day_MA);
+update facebook set 30_day_MA=if(30_day_MA=&#39;&#39;,NULL,30_day_MA);
+
+CREATE TABLE FAANG AS
+SELECT f.`Date`, f.`Close` as FACEBOOK1,
+am.`Close` AS AMAZON1,
+ap.`Close` AS APPLE1,
+n.`Close` AS Netflix1,
+g.`Close` AS Google1
+
+FROM facebook f INNER JOIN amazon am ON f.`Date` = am.`Date`
+INNER JOIN apple ap ON f.`Date` = ap.`Date`
+INNER JOIN netflix n ON f.`Date` = n.`Date`
+INNER JOIN google g ON f.`Date` = g.`Date`;
+
+SELECT *
+FROM FAANG;
+
+CREATE TABLE facebook2 AS
+select `Date`, `Close`,
+case when (`10_day_MA` &gt; `30_day_MA`) then &#39;Buy&#39;
+when (`10_day_MA` &lt; `30_day_MA`) then &#39;Sell&#39;
+else &#39;Hold&#39;
+end as `Signal1`
+from facebook ;
+
+select *
+
+from facebook2;
+
+CREATE TABLE amazon2 AS
+select `Date`, `Close`,
+case when (`10_day_MA` &gt; `30_day_MA`) then &#39;Buy&#39;
+when (`10_day_MA` &lt; `30_day_MA`) then &#39;Sell&#39;
+else &#39;Hold&#39;
+end as `Signal1`
+from amazon ;
+
+CREATE TABLE apple2 AS
+select `Date`, `Close`,
+case when (`10_day_MA` &gt; `30_day_MA`) then &#39;Buy&#39;
+when (`10_day_MA` &lt; `30_day_MA`) then &#39;Sell&#39;
+else &#39;Hold&#39;
+end as `Signal1`
+from apple ;
+
+CREATE TABLE google2 AS
+select `Date`, `Close`,
+case when (`10_day_MA` &gt; `30_day_MA`) then &#39;Buy&#39;
+when (`10_day_MA` &lt; `30_day_MA`) then &#39;Sell&#39;
+else &#39;Hold&#39;
+end as `Signal1`
+from google;
+
+CREATE TABLE netflix2 AS
+select `Date`, `Close`,
+case when (`10_day_MA` &gt; `30_day_MA`) then &#39;Buy&#39;
+when (`10_day_MA` &lt; `30_day_MA`) then &#39;Sell&#39;
+else &#39;Hold&#39;
+end as `Signal1`
+from netflix;
+
+select *
+from facebook2;
+
+Alter table facebook2 add column NewDate date;
+Update facebook2
+SET NewDate = Str_to_date(Left(Date,10), &#39;%d-%m-%Y&#39;);
+
+Alter table apple2 add column NewDate date;
+Update apple2
+SET NewDate = Str_to_date(Left(Date,10), &#39;%d-%m-%Y&#39;);
+
+Alter table amazon2 add column NewDate date;
+Update amazon2
+SET NewDate = Str_to_date(Left(Date,10), &#39;%d-%m-%Y&#39;);
+
+Alter table netflix2 add column NewDate date;
+Update netflix2
+SET NewDate = Str_to_date(Left(Date,10), &#39;%d-%m-%Y&#39;);
+
+Alter table google2 add column NewDate date;
+Update google2
+SET NewDate = Str_to_date(Left(Date,10), &#39;%d-%m-%Y&#39;);
+
+/*Facebook - Total no. of favourable days to buy/sell/hold*/
+select count(NewDate)
+from facebook2
+where Signal1 = &quot;Buy&quot;;
+
+select count(NewDate)
+from facebook2
+where Signal1 = &quot;Sell&quot;;
+
+select count(NewDate)
+from facebook2
+where Signal1 = &quot;Hold&quot;;
+
+/*Apple - Total no. of favourable days to buy/sell/hold*/
+select count(NewDate)
+from apple2
+where Signal1 = &quot;Buy&quot;;
+
+select count(NewDate)
+from apple2
+
+where Signal1 = &quot;Sell&quot;;
+
+select count(NewDate)
+from apple2
+where Signal1 = &quot;Hold&quot;;
+
+/*Amazon - Total no. of favourable days to buy/sell/hold*/
+select count(NewDate)
+from amazon2
+where Signal1 = &quot;Buy&quot;;
+
+select count(NewDate)
+from amazon2
+where Signal1 = &quot;Sell&quot;;
+
+select count(NewDate)
+from amazon2
+where Signal1 = &quot;Hold&quot;;
+
+/*Netflix - Total no. of favourable days to buy/sell/hold*/
+select count(NewDate)
+from netflix2
+where Signal1 = &quot;Buy&quot;;
+
+select count(NewDate)
+from netflix2
+
+where Signal1 = &quot;Sell&quot;;
+
+select count(NewDate)
+from netflix2
+where Signal1 = &quot;Hold&quot;;
+
+/*Google - Total no. of favourable days to buy/sell/hold*/
+select count(NewDate)
+from google2
+where Signal1 = &quot;Buy&quot;;
+
+select count(NewDate)
+from google2
+where Signal1 = &quot;Sell&quot;;
+
+select count(NewDate)
+from google2
+where Signal1 = &quot;Hold&quot;;
+
+/*Apple - best predictions to buy and sell*/
+
+select date, close
+from apple2
+where `signal` = &#39;Buy&#39;
+order by close
+limit 1;
+
+select date, close
+from apple2
+where `signal` = &#39;Sell&#39;
+order by close desc
+limit 1;
+
+/*Amazon - best predictions to buy and sell*/
+select date, close
+from amazon2
+where `signal` = &#39;Buy&#39;
+order by close
+limit 1;
+
+select date, close
+from amazon2
+where `signal` = &#39;Sell&#39;
+order by close desc
+limit 1;
+
+/*Facebook - best predictions to buy and sell*/
+select date, close
+from facebook2
+where `signal` = &#39;Buy&#39;
+order by close
+limit 1;
+
+select date, close
+from facebook2
+where `signal` = &#39;Sell&#39;
+order by close desc
+limit 1;
+
+/*Google - best predictions to buy and sell*/
+select date, close
+from google2
+where `signal` = &#39;Buy&#39;
+order by close
+limit 1;
+
+select date, close
+from google2
+where `signal` = &#39;Sell&#39;
+order by close desc
+limit 1;
+
+/*Netflix - best predictions to buy and sell*/
+select date, close
+from netflix2
+where `signal` = &#39;Buy&#39;
+order by close
+limit 1;
+
+select date, close
+from netflix2
+where `signal` = &#39;Sell&#39;
+order by close desc
+limit 1;
+
+/*Calculating the % returns for FAANG from 2020-01-02 to 2021-03-26*/
+select round((max(close) - min(open)) / min(open) * 100, 2) AS
+percentage_gain
+from amazon
+where NewDate in (date&#39;2020-01-02&#39;, date&#39;2021-03-26&#39;);
+
+select round((max(close) - min(open)) / min(open) * 100, 2) AS
+percentage_gain
+from apple
+where NewDate in (date&#39;2020-01-02&#39;, date&#39;2021-03-26&#39;);
+
+select round((max(close) - min(open)) / min(open) * 100, 2) AS
+percentage_gain
+from facebook
+where NewDate in (date&#39;2020-01-02&#39;, date&#39;2021-03-26&#39;);
+
+select round((max(close) - min(open)) / min(open) * 100, 2) AS
+percentage_gain
+from google
+where NewDate in (date&#39;2020-01-02&#39;, date&#39;2021-03-26&#39;);
+
+select round((max(close) - min(open)) / min(open) * 100, 2) AS
+percentage_gain
+from netflix
+where NewDate in (date&#39;2020-01-02&#39;, date&#39;2021-03-26&#39;);
